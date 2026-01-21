@@ -19,9 +19,25 @@ try {
   console.error('Supabase client failed to initialize:', err.message);
 }
 
+
 // Auth routes
 const authRoutes = require('./auth');
 app.use('/auth', authRoutes);
+
+// Auth middleware for protected routes
+const { authMiddleware, requireRole } = require('./middleware/authMiddleware');
+
+// Example: Protected route (any logged-in user)
+app.get('/protected', authMiddleware, (req, res) => {
+  res.json({ message: `Hello, ${req.user.user_metadata.name}! You are authenticated.` });
+});
+
+
+// Example: Owner-only route (role-based access)
+// Only users with role_id === 1 (owner) can access this route
+app.post('/owner-action', authMiddleware, requireRole('owner'), (req, res) => {
+  res.json({ message: `Hello, ${req.user.user_metadata.name}! You have owner access.` });
+});
 
 
 // Health check route (simple version)

@@ -26,9 +26,26 @@ Professional backends separate business logic from UI, use environment variables
 * role_id (FK to roles)
 * created_at, updated_at (timestamp)
 
+
 ### 2. roles
 * id (serial, PK)
 * name (string, e.g., 'owner', 'manager', 'chef', 'barback', 'staff')
+
+#### Role Mapping
+| id | name     | Description                        |
+|----|----------|------------------------------------|
+| 1  | owner    | Full access (Rod)                  |
+| 2  | manager  | Approve specials, manage events    |
+| 3  | chef     | Create/edit specials               |
+| 4  | barback  | Manage sports schedules            |
+| 5  | staff    | View info, limited actions         |
+
+**How to use:**
+- When registering a user, set role_id to the correct value (1–5).
+- Use requireRole('owner'), requireRole('manager'), etc., in your middleware for role-based access.
+
+**Real World Context:**
+This mapping makes it easy to add or change roles as the business grows. It also keeps your code readable and maintainable for future developers or teammates.
 
 ### 3. restaurants
 * id (uuid, PK)
