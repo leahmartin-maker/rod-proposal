@@ -1,3 +1,4 @@
+
 // server/index.js
 // Entry point for the backend server
 // This file sets up the Express app, loads environment variables, and provides a health check route.
@@ -18,6 +19,12 @@ try {
 } catch (err) {
   console.error('Supabase client failed to initialize:', err.message);
 }
+
+
+
+// Specials routes (daily specials feature)
+const specialsRoutes = require('./specials');
+app.use('/specials', specialsRoutes);
 
 
 // Auth routes
