@@ -80,6 +80,12 @@ export default function RodDashboard() {
         >
           Anchor
         </button>
+        <button
+          className={`px-4 py-2 rounded-full font-semibold ${restaurant === "Fajitaville" ? "bg-blue-600 text-white" : "bg-zinc-200"}`}
+          onClick={() => setRestaurant("Fajitaville")}
+        >
+          Fajitaville
+        </button>
       </div>
 
       {/* Header */}
@@ -146,34 +152,42 @@ export default function RodDashboard() {
         {/* Example popup (replace with modal logic as needed) */}
         {/* <div className="mt-2 bg-white dark:bg-zinc-900 rounded shadow p-2">
           {staffClockedIn.map(name => <div key={name}>{name}</div>)}
-        </div> */}
-      </div>
 
+        {/* Header */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <span className="text-lg font-bold">{restaurant}</span>
+          </div>
+          <button className="text-zinc-500">⚙️</button>
+        </div>
 
-      {/* Messages Section */}
-      <div className="bg-white dark:bg-zinc-900 rounded-lg shadow p-4 mb-4">
-        <div className="flex justify-between items-center mb-2">
-          <span className="text-sm text-zinc-500">Messages</span>
-          <button className="text-blue-600 text-xs">Send</button>
-        </div>
-        {/* Search bar for recipients */}
-        <input
-          type="text"
-          placeholder="Search employees or groups..."
-          className="w-full mb-2 px-2 py-1 rounded border border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 text-sm"
-        />
-        {/* Dropdown for search results and multi-select (placeholder) */}
-        <div className="mb-2 text-xs text-zinc-400">Dropdown with selectable employees/groups will appear as you type. You can select multiple recipients.</div>
-        {/* Message thread placeholder */}
-        <div className="bg-zinc-100 dark:bg-zinc-800 rounded p-2 h-24 mb-2 text-xs text-zinc-500 flex items-center justify-center">
-          Message thread will appear here.
-        </div>
-        {/* Message input */}
-        <input
-          type="text"
-          placeholder="Type your message..."
-          className="w-full px-2 py-1 rounded border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm"
-        />
+        {/* Main Content by Restaurant */}
+        {restaurant === "Fajitaville" ? (
+          <div className="bg-white dark:bg-zinc-900 rounded-lg shadow p-8 mb-4 text-center text-xl font-semibold text-blue-700 dark:text-blue-300">
+            New restaurant coming soon!
+          </div>
+        ) : (
+          <>
+            {/* Overview Panel */}
+            <div className="bg-white dark:bg-zinc-900 rounded-lg shadow p-4 mb-4">
+              <div className="text-sm text-zinc-500 mb-2">Overview</div>
+              <div className="flex flex-col gap-2">
+                <div className="flex justify-between">
+                  <span>Sales Today</span>
+                  <span className="font-semibold">${sales.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Special: {special.name}</span>
+                  <span className="font-semibold">{special.sales} sold</span>
+                </div>
+                {currentEvent.isToday && (
+                  <div className="flex justify-between text-blue-600">
+                    <span>Event: {currentEvent.name}</span>
+                    <span className="font-semibold">Paid: ${currentEvent.amountPaid}</span>
+                  </div>
+                )}
+              </div>
+            </div>
       </div>
 
 
