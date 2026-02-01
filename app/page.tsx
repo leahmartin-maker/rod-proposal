@@ -4,11 +4,11 @@ import { getRodTableData } from "../lib/getRodTableData";
 
 export default async function Home() {
   let rodData = [];
-  let error = null;
+  let error: Error | null = null;
   try {
     rodData = await getRodTableData();
   } catch (e) {
-    error = e;
+    error = e instanceof Error ? e : new Error(String(e));
   }
 
   return (
