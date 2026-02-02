@@ -1,5 +1,3 @@
-
-
 "use client";
 import React, { useState } from "react";
 import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
@@ -186,7 +184,7 @@ export default function RodDashboard() {
           className={`px-4 py-2 rounded-full font-semibold transition ${restaurant === "Fajitaville" ? 'bg-yellow-400 text-black' : 'bg-zinc-200 text-black'}`}
           onClick={() => setRestaurant("Fajitaville")}
         >
-          Fajitaville
+          COMING SOON!
         </button>
       </div>
 
