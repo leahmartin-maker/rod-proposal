@@ -76,7 +76,23 @@ export default function StaffDashboard() {
         </HKCard>
 
         {/* Specials */}
-        <HKCard title="Specials">
+        <HKCard title="Specials" action={<button onClick={async () => {
+          const shareText = `🍗 Wing Wednesday at HardKnocks!\n\n8 boneless or traditional wings with fries, dipping sauce, carrots, and celery for $12.99\n\nCome join us!`;
+          if (navigator.share) {
+            try {
+              await navigator.share({
+                title: 'Wing Wednesday',
+                text: shareText,
+              });
+            } catch (err) {}
+          } else {
+            navigator.clipboard.writeText(shareText).then(() => {
+              alert('Special copied to clipboard! Paste it anywhere you like.');
+            }).catch(() => {
+              alert('Share failed. Please try again.');
+            });
+          }
+        }} className="text-xs bg-red-700 hover:bg-red-800 text-white rounded px-2 py-1 font-semibold">Share</button>}>
           <ul className="space-y-2">
             {specials.map((s, i) => (
               <li key={i} className="text-sm text-zinc-300">{s.name}</li>
