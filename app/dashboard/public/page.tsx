@@ -48,6 +48,15 @@ export default function PublicDashboard() {
       </header>
 
       <main className="flex-1 flex flex-col gap-4 px-2 pb-24 pt-2 w-full max-w-md mx-auto text-white">
+        {/* Announcements */}
+        <HKCard title="Announcements">
+          <ul className="space-y-2">
+            {announcements.map((a, i) => (
+              <li key={i} className="text-sm text-zinc-300">{a.text}</li>
+            ))}
+          </ul>
+        </HKCard>
+
         {/* Specials */}
         <HKCard title="Today's Specials" action={<button onClick={async () => {
           const shareText = `🍗 Wing Wednesday at HardKnocks!\n\n8 boneless or traditional wings with fries, dipping sauce, carrots, and celery for $12.99\n\nCome join us!`;
@@ -92,15 +101,6 @@ export default function PublicDashboard() {
             />
           </div>
           <div className="text-xs text-zinc-400">Click an event to see details.</div>
-        </HKCard>
-
-        {/* Announcements */}
-        <HKCard title="Announcements">
-          <ul className="space-y-2">
-            {announcements.map((a, i) => (
-              <li key={i} className="text-sm text-zinc-300">{a.text}</li>
-            ))}
-          </ul>
         </HKCard>
 
         {/* Contact Info */}
