@@ -13,7 +13,8 @@ const locales = { 'en-US': enUS };
 const localizer = dateFnsLocalizer({ format, parse, startOfWeek, getDay, locales });
 const eventList = [
   { title: 'Bingo Night', start: new Date(2026, 0, 28, 19, 0), end: new Date(2026, 0, 28, 22, 0), details: 'Weekly bingo event' },
-  { title: 'Beach Wedding', start: new Date(2026, 0, 29, 17, 0), end: new Date(2026, 0, 29, 22, 0), details: '100 guests, Outdoor Bar' },
+  { title: 'Super Bowl Party', start: new Date(2026, 1, 8, 18, 0), end: new Date(2026, 1, 8, 23, 30), details: '200+ guests expected, full bar & kitchen' },
+  { title: 'Mardi Gras Parade Celebration', start: new Date(2026, 2, 1, 15, 0), end: new Date(2026, 2, 1, 22, 0), details: 'Live DJ, costume contest, themed specials' },
 ];
 
 export default function PublicDashboard() {

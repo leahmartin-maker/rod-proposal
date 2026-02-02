@@ -12,8 +12,10 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 const locales = { 'en-US': enUS };
 const localizer = dateFnsLocalizer({ format, parse, startOfWeek, getDay, locales });
 const eventList = [
-  { title: 'Bingo Night', start: new Date(2026, 0, 28, 19, 0), end: new Date(2026, 0, 28, 22, 0), details: 'Weekly bingo event' },
   { title: 'Private Party', start: new Date(2026, 0, 27, 18, 0), end: new Date(2026, 0, 27, 21, 0), details: '50 guests, Room A' },
+  { title: 'Bingo Night', start: new Date(2026, 0, 28, 19, 0), end: new Date(2026, 0, 28, 22, 0), details: 'Weekly bingo event' },
+  { title: 'Super Bowl Party', start: new Date(2026, 1, 8, 18, 0), end: new Date(2026, 1, 8, 23, 30), details: '200+ guests expected' },
+  { title: 'Mardi Gras Parade Celebration', start: new Date(2026, 2, 1, 15, 0), end: new Date(2026, 2, 1, 22, 0), details: 'Live DJ, costume contest, themed specials' },
 ];
 
 export default function StaffDashboard() {

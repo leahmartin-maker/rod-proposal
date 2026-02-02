@@ -46,10 +46,84 @@ const eventList = [
     paid: 1200,
     owed: 200,
   },
+  {
+    title: 'Super Bowl Party',
+    start: new Date(2026, 1, 8, 18, 0),
+    end: new Date(2026, 1, 8, 23, 30),
+    details: '200+ guests expected, full bar & kitchen',
+    paid: null,
+    owed: null,
+  },
+  {
+    title: 'Mardi Gras Parade Celebration',
+    start: new Date(2026, 2, 1, 15, 0),
+    end: new Date(2026, 2, 1, 22, 0),
+    details: 'Live DJ, costume contest, themed specials',
+    paid: null,
+    owed: null,
+  },
 ];
 
 export default function RodDashboard() {
   const [restaurant, setRestaurant] = useState("Hardknocks");
+  const [messageText, setMessageText] = useState("");
+  const [selectedRecipients, setSelectedRecipients] = useState<string[]>([]);
+  const [showMessageUI, setShowMessageUI] = useState(false);
+  const [announcements, setAnnouncements] = useState<string[]>(["🅿️ Park on Palmira for private event (guest parking only)"]);
+  const [newAnnouncement, setNewAnnouncement] = useState("");
+  const [showAddAnnouncement, setShowAddAnnouncement] = useState(false);
+
+  const handleAddAnnouncement = () => {
+    if (newAnnouncement.trim()) {
+      setAnnouncements([...announcements, newAnnouncement.trim()]);
+      setNewAnnouncement("");
+      setShowAddAnnouncement(false);
+    }
+  };
+
+  const handleRemoveAnnouncement = (index: number) => {
+    setAnnouncements(announcements.filter((_, i) => i !== index));
+  };
+
+  // Staff groups and individual staff
+  const staffGroups = {
+    "Managers": ["Rod", "Manager 1"],
+    "Bar": ["Bartender 1", "Bartender 2"],
+    "Barbacks": ["Barback 1", "Barback 2"],
+    "Kitchen": ["Chef", "Prep Cook"],
+  };
+  const allStaff = ["Devonn", "Jedi", "Roxanne", "Sarah", "Marcus", "James", "Tasha"];
+
+  const handleSendMessage = () => {
+    if (selectedRecipients.length === 0 || !messageText.trim()) {
+      alert('Please select staff and write a message.');
+      return;
+    }
+    alert(`Message sent to ${selectedRecipients.length} person/people: ${selectedRecipients.join(", ")}\n\nMessage: "${messageText}"`);
+    setMessageText("");
+    setSelectedRecipients([]);
+    setShowMessageUI(false);
+  };
+
+  const toggleRecipient = (name: string) => {
+    setSelectedRecipients(prev =>
+      prev.includes(name) ? prev.filter(r => r !== name) : [...prev, name]
+    );
+  };
+
+  const toggleGroup = (groupName: string) => {
+    const groupStaff = staffGroups[groupName as keyof typeof staffGroups];
+    const allSelected = groupStaff.every(person => selectedRecipients.includes(person));
+    
+    if (allSelected) {
+      setSelectedRecipients(prev => prev.filter(r => !groupStaff.includes(r)));
+    } else {
+      setSelectedRecipients(prev => [
+        ...prev,
+        ...groupStaff.filter(person => !prev.includes(person))
+      ]);
+    }
+  };
 
   // Placeholder data for demonstration
   const sales = restaurant === "Hardknocks" ? 2450.75 : 1875.50;
@@ -63,6 +137,29 @@ export default function RodDashboard() {
     ? ["Devonn", "Jedi", "Roxanne"]
     : ["Sam", "Taylor"];
 
+  // Handle sharing the special to any platform
+  const handleShareSpecial = async () => {
+    const shareText = `🍗 ${special.name} at HardKnocks!\n\n8 boneless or traditional wings with fries, dipping sauce, carrots, and celery for $12.99\n\nCome join us!`;
+    
+    // Use Web Share API if available (works on mobile and some desktop browsers)
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: special.name,
+          text: shareText,
+        });
+      } catch (err) {
+        // User cancelled the share dialog
+      }
+    } else {
+      // Fallback: copy to clipboard
+      navigator.clipboard.writeText(shareText).then(() => {
+        alert('Special copied to clipboard! Paste it anywhere you like.');
+      }).catch(() => {
+        alert('Share failed. Please try again.');
+      });
+    }
+  };
 
   // Theme logic
   // Only apply redesign for HardKnocks
@@ -144,9 +241,15 @@ export default function RodDashboard() {
           <div className="rounded-2xl shadow-lg bg-black/80 border border-red-700 p-4 text-white">
             <div className="flex justify-between items-center mb-2">
               <span className="text-sm text-red-400 font-bold uppercase">Specials</span>
-              <button className="text-xs bg-red-700 hover:bg-red-800 text-white rounded px-2 py-1 font-semibold">Edit/Approve</button>
+              <div className="flex gap-2">
+                <button className="text-xs bg-red-700 hover:bg-red-800 text-white rounded px-2 py-1 font-semibold">Edit/Approve</button>
+                <button onClick={handleShareSpecial} className="text-xs bg-red-700 hover:bg-red-800 text-white rounded px-2 py-1 font-semibold">Share</button>
+              </div>
             </div>
             <div className="text-base font-semibold">{special.name}</div>
+            <div className="text-sm text-zinc-300 mt-1">
+              8 boneless or traditional wings with fries, dipping sauce, carrots, and celery for $12.99
+            </div>
           </div>
         )}
 
@@ -175,21 +278,153 @@ export default function RodDashboard() {
         {/* Announcements Card */}
         {isHardKnocks && (
           <div className="rounded-2xl shadow-lg bg-black/80 border border-red-700 p-4 text-white">
-            <div className="flex justify-between items-center mb-2">
-              <span className="text-sm text-red-400 font-bold uppercase">Announcements</span>
-              <button className="text-lg font-bold bg-red-700 hover:bg-red-800 text-white rounded-full w-8 h-8 flex items-center justify-center">+</button>
+            <div className="flex justify-between items-center mb-3">
+              <span className="text-sm text-red-400 font-bold uppercase">📢 Announcements</span>
+              <button 
+                onClick={() => setShowAddAnnouncement(!showAddAnnouncement)}
+                className="text-lg font-bold bg-red-700 hover:bg-red-800 text-white rounded-full w-8 h-8 flex items-center justify-center"
+              >
+                +
+              </button>
             </div>
-            <div className="text-base text-zinc-200">No announcements for today.</div>
-            <div className="text-xs text-zinc-400 mt-1">(Managers/Rod can add a daily announcement. Only visible for the current business day.)</div>
+
+            {announcements.length === 0 ? (
+              <div className="text-sm text-zinc-400">No active announcements</div>
+            ) : (
+              <div className="space-y-2">
+                {announcements.map((announcement, index) => (
+                  <div key={index} className="bg-red-900/30 border border-red-700 rounded p-2 flex justify-between items-start gap-2">
+                    <div className="text-sm text-white flex-1">{announcement}</div>
+                    <button
+                      onClick={() => handleRemoveAnnouncement(index)}
+                      className="text-xs text-red-400 hover:text-red-300 font-semibold shrink-0 whitespace-nowrap"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {showAddAnnouncement && (
+              <div className="mt-3 space-y-2 pt-3 border-t border-zinc-600">
+                <textarea
+                  value={newAnnouncement}
+                  onChange={(e) => setNewAnnouncement(e.target.value)}
+                  placeholder="Add announcement (parking, schedule changes, reminders, etc.)"
+                  className="w-full bg-zinc-900 border border-zinc-700 rounded p-2 text-white text-sm placeholder-zinc-500 focus:outline-none focus:border-red-700 h-16 resize-none"
+                />
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleAddAnnouncement}
+                    className="flex-1 bg-red-700 hover:bg-red-800 text-white rounded py-1 font-semibold text-sm"
+                  >
+                    Add
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowAddAnnouncement(false);
+                      setNewAnnouncement("");
+                    }}
+                    className="flex-1 bg-zinc-700 hover:bg-zinc-600 text-white rounded py-1 font-semibold text-sm"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+
+            <div className="text-xs text-zinc-500 mt-2 border-t border-zinc-700 pt-2">
+              Announcements persist until manually removed. Staff sees them immediately when logging in.
+            </div>
           </div>
         )}
 
-        {/* Who's Working Card */}
+        {/* Send Message Card */}
         {isHardKnocks && (
           <div className="rounded-2xl shadow-lg bg-black/80 border border-red-700 p-4 text-white">
-            <button className="w-full bg-red-700 hover:bg-red-800 text-white rounded-lg py-2 font-bold text-lg flex items-center justify-center gap-2">
-              <span className="material-icons">groups</span> View Clocked-In Staff
-            </button>
+            {!showMessageUI ? (
+              <button 
+                onClick={() => setShowMessageUI(true)}
+                className="w-full bg-red-700 hover:bg-red-800 text-white rounded-lg py-2 font-bold text-lg"
+              >
+                💬 Send Message to Staff
+              </button>
+            ) : (
+              <div className="space-y-3">
+                <div>
+                  <div className="text-sm text-red-400 font-bold uppercase mb-2">Select Staff</div>
+                  
+                  {/* Groups */}
+                  <div className="space-y-2 mb-3">
+                    {Object.keys(staffGroups).map(groupName => {
+                      const groupStaff = staffGroups[groupName as keyof typeof staffGroups];
+                      const allSelected = groupStaff.every(person => selectedRecipients.includes(person));
+                      return (
+                        <label key={groupName} className="flex items-center gap-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={allSelected}
+                            onChange={() => toggleGroup(groupName)}
+                            className="w-4 h-4 rounded"
+                          />
+                          <span className="text-sm font-semibold text-yellow-400">{groupName}</span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                  
+                  {/* Divider */}
+                  <div className="border-t border-zinc-600 my-2"></div>
+                  
+                  {/* Individual Staff */}
+                  <div className="space-y-1 max-h-32 overflow-y-auto">
+                    {allStaff.map(name => (
+                      <label key={name} className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={selectedRecipients.includes(name)}
+                          onChange={() => toggleRecipient(name)}
+                          className="w-4 h-4 rounded"
+                        />
+                        <span className="text-sm text-zinc-300">{name}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Message Input */}
+                <div>
+                  <div className="text-xs text-zinc-400 mb-1">Selected: {selectedRecipients.length} person/people</div>
+                  <textarea
+                    value={messageText}
+                    onChange={(e) => setMessageText(e.target.value)}
+                    placeholder="Type your message here..."
+                    className="w-full bg-zinc-900 border border-zinc-700 rounded p-2 text-white text-sm placeholder-zinc-500 focus:outline-none focus:border-red-700 h-20 resize-none"
+                  />
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleSendMessage}
+                    className="flex-1 bg-red-700 hover:bg-red-800 text-white rounded py-2 font-semibold text-sm"
+                  >
+                    Send
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowMessageUI(false);
+                      setMessageText("");
+                      setSelectedRecipients([]);
+                    }}
+                    className="flex-1 bg-zinc-700 hover:bg-zinc-600 text-white rounded py-2 font-semibold text-sm"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -227,9 +462,9 @@ export default function RodDashboard() {
         {/* Public Dashboard Links */}
         {isHardKnocks && (
           <div className="mt-2 text-center text-xs text-zinc-400">
-            <a href="/dashboard/anchor" className="underline">View Anchor Public Dashboard</a>
+            <a href="/dashboard/staff" className="underline">View Staff Dashboard</a>
             <span className="mx-2">|</span>
-            <a href="/dashboard/hardknocks" className="underline">View Hardknocks Public Dashboard</a>
+            
           </div>
         )}
 
